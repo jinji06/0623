@@ -1,0 +1,14 @@
+{
+  "resourceName": "uechiapp",
+  "tableName": "uechiappzisseki",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "aumnp",
+    "fieldType": "number"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}
