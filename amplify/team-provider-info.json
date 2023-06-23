@@ -1,4 +1,31 @@
 {
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-rnavi-staging-14815-authRole",
+      "UnauthRoleArn": "arn:aws:iam::711556954185:role/amplify-rnavi-staging-14815-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::711556954185:role/amplify-rnavi-staging-14815-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-rnavi-staging-14815-deployment",
+      "UnauthRoleName": "amplify-rnavi-staging-14815-unauthRole",
+      "StackName": "amplify-rnavi-staging-14815",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:711556954185:stack/amplify-rnavi-staging-14815/392b1a50-f5e7-11ed-82e3-0eff94dc044b",
+      "AmplifyAppId": "d12d6vsn91sdqd"
+    },
+    "categories": {
+      "auth": {
+        "Rnavi": {}
+      },
+      "function": {
+        "uechiapp": {
+          "deploymentBucketName": "amplify-rnavi-staging-14815-deployment",
+          "s3Key": "amplify-builds/uechiapp-6a6658326f5165525841-build.zip"
+        }
+      },
+      "storage": {
+        "uechiapp": {}
+      }
+    }
+  },
   "master": {
     "awscloudformation": {
       "AuthRoleName": "amplify-amplifyhomes-master-124532-authRole",
@@ -18,17 +45,9 @@
         "userPoolGroups": {}
       },
       "storage": {
-        "s3amplifyhomesstorage855d51b1": {},
-        "sakumotoApp": {},
-        "sakumotoAppUser": {}
+        "s3amplifyhomesstorage855d51b1": {}
       },
       "function": {
-        "sakumotodailyreportc9355e11": {},
-        "sakumotodailyreportcd1132b6": {},
-        "todoFunction": {
-          "deploymentBucketName": "amplify-amplifyhomes-master-124532-deployment",
-          "s3Key": "amplify-builds/todoFunction-476a724a686161584741-build.zip"
-        },
         "LambdaTest": {
           "deploymentBucketName": "amplify-amplifyhomes-master-124532-deployment",
           "s3Key": "amplify-builds/LambdaTest-42587a6b717542657639-build.zip"
@@ -36,16 +55,10 @@
         "LambdaTest1": {
           "deploymentBucketName": "amplify-amplifyhomes-master-124532-deployment",
           "s3Key": "amplify-builds/LambdaTest1-43516234616144413742-build.zip"
-        },
-        "sakumotoAppUser": {
-          "deploymentBucketName": "amplify-amplifyhomes-master-124532-deployment",
-          "s3Key": "amplify-builds/sakumotoAppUser-62594f3642744f463044-build.zip"
         }
       },
       "api": {
-        "LambdaTest": {},
-        "todoApps": {},
-        "sakumotoAppUser": {}
+        "LambdaTest": {}
       }
     }
   }

@@ -24,24 +24,21 @@ export default function HomeUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
+    address: "",
     image_url: "",
-    bounty: "",
-    birthday: "",
+    price: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
+  const [address, setAddress] = React.useState(initialValues.address);
   const [image_url, setImage_url] = React.useState(initialValues.image_url);
-  const [bounty, setBounty] = React.useState(initialValues.bounty);
-  const [birthday, setBirthday] = React.useState(initialValues.birthday);
+  const [price, setPrice] = React.useState(initialValues.price);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = homeRecord
       ? { ...initialValues, ...homeRecord }
       : initialValues;
-    setName(cleanValues.name);
+    setAddress(cleanValues.address);
     setImage_url(cleanValues.image_url);
-    setBounty(cleanValues.bounty);
-    setBirthday(cleanValues.birthday);
+    setPrice(cleanValues.price);
     setErrors({});
   };
   const [homeRecord, setHomeRecord] = React.useState(homeModelProp);
@@ -56,10 +53,9 @@ export default function HomeUpdateForm(props) {
   }, [idProp, homeModelProp]);
   React.useEffect(resetStateValues, [homeRecord]);
   const validations = {
-    name: [],
+    address: [],
     image_url: [],
-    bounty: [],
-    birthday: [],
+    price: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -87,10 +83,9 @@ export default function HomeUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name,
+          address,
           image_url,
-          bounty,
-          birthday,
+          price,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -138,31 +133,30 @@ export default function HomeUpdateForm(props) {
       {...rest}
     >
       <TextField
-        label="Name"
+        label="Address"
         isRequired={false}
         isReadOnly={false}
-        value={name}
+        value={address}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name: value,
+              address: value,
               image_url,
-              bounty,
-              birthday,
+              price,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.address ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.address?.hasError) {
+            runValidationTasks("address", value);
           }
-          setName(value);
+          setAddress(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
+        onBlur={() => runValidationTasks("address", address)}
+        errorMessage={errors.address?.errorMessage}
+        hasError={errors.address?.hasError}
+        {...getOverrideProps(overrides, "address")}
       ></TextField>
       <TextField
         label="Image url"
@@ -173,10 +167,9 @@ export default function HomeUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name,
+              address,
               image_url: value,
-              bounty,
-              birthday,
+              price,
             };
             const result = onChange(modelFields);
             value = result?.image_url ?? value;
@@ -192,58 +185,34 @@ export default function HomeUpdateForm(props) {
         {...getOverrideProps(overrides, "image_url")}
       ></TextField>
       <TextField
-        label="Bounty"
+        label="Price"
         isRequired={false}
         isReadOnly={false}
-        value={bounty}
+        type="number"
+        step="any"
+        value={price}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
-              name,
+              address,
               image_url,
-              bounty: value,
-              birthday,
+              price: value,
             };
             const result = onChange(modelFields);
-            value = result?.bounty ?? value;
+            value = result?.price ?? value;
           }
-          if (errors.bounty?.hasError) {
-            runValidationTasks("bounty", value);
+          if (errors.price?.hasError) {
+            runValidationTasks("price", value);
           }
-          setBounty(value);
+          setPrice(value);
         }}
-        onBlur={() => runValidationTasks("bounty", bounty)}
-        errorMessage={errors.bounty?.errorMessage}
-        hasError={errors.bounty?.hasError}
-        {...getOverrideProps(overrides, "bounty")}
-      ></TextField>
-      <TextField
-        label="Birthday"
-        isRequired={false}
-        isReadOnly={false}
-        value={birthday}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              name,
-              image_url,
-              bounty,
-              birthday: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.birthday ?? value;
-          }
-          if (errors.birthday?.hasError) {
-            runValidationTasks("birthday", value);
-          }
-          setBirthday(value);
-        }}
-        onBlur={() => runValidationTasks("birthday", birthday)}
-        errorMessage={errors.birthday?.errorMessage}
-        hasError={errors.birthday?.hasError}
-        {...getOverrideProps(overrides, "birthday")}
+        onBlur={() => runValidationTasks("price", price)}
+        errorMessage={errors.price?.errorMessage}
+        hasError={errors.price?.hasError}
+        {...getOverrideProps(overrides, "price")}
       ></TextField>
       <Flex
         justifyContent="space-between"
