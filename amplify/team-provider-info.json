@@ -18,10 +18,14 @@
       "function": {
         "uechiapp": {
           "deploymentBucketName": "amplify-rnavi-staging-14815-deployment",
-          "s3Key": "amplify-builds/uechiapp-6a6658326f5165525841-build.zip"
+          "s3Key": "amplify-builds/uechiapp-5a417a47713754586377-build.zip"
         }
       },
       "storage": {
+        "uechiapp": {}
+      },
+      "api": {
+        "amplifyhomes": {},
         "uechiapp": {}
       }
     }

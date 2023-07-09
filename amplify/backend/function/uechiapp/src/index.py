@@ -2,6 +2,7 @@ import json
 import boto3
 import uuid
 from decimal import Decimal
+from datetime import datetime, timedelta
 
 # Define the DecimalEncoder class.
 class DecimalEncoder(json.JSONEncoder):
@@ -19,65 +20,90 @@ def handler(event, context):
 
     # If the request is a POST request, do the following.
     if event['httpMethod'] == 'POST':
-        # Get the request body.
         body = json.loads(event['body'])
+        action = body.get('action', '')
 
-        # 新規作成の場合はこちら
-        if body['action'] == 'create':
-            # テーブルにデータを挿入する
-            app_table.put_item(Item={
-                'id': str(uuid.uuid4()),
-                'title': body['title'],
-                'description': body['description']
-            })
+        if action == 'shop_sell':
+            aumnp = body.get('aumnp', '')
+            description = body.get('description', '')
+            user_id = body.get('user_id', '')
+            timestamp = datetime.now().isoformat()
 
-        # UPDATE アクセスの場合はこちら
-        elif body['action'] == 'update':
-            # Update the Todo.
-            app_table.update_item(Key={
-                'id': body['id']
-            }, UpdateExpression='SET title = :title, description = :description', ExpressionAttributeValues={
-                ':title': body['title'],
-                ':description': body['description']
-            })
+            # Generate a UUID for the primary key
+            id = str(uuid.uuid4())
 
-        # DELETE /{id} アクセスの場合はこちら
-        elif body['action'] == 'delete':
-            # Delete the Todo.
-            app_table.delete_item(Key={
-                'id': body['id']
-            })
+            # Create a new item to be inserted into the DynamoDB table
+            item = {
+                'id': id,
+                'aumnp': aumnp,
+                'description': description,
+                'user': user_id,
+                'timestamp': timestamp
+            }
 
-    # GET /{id} アクセスの場合はこちら
-    elif event['httpMethod'] == 'GET' and event.get('queryStringParameters') and 'id' in event['queryStringParameters']:
-        # Get the Todo with the specified ID.
-        todo = app_table.get_item(Key={
-            'id': event['queryStringParameters']['id']
-        })
+            # Insert the item into the DynamoDB table
+            app_table.put_item(Item=item)
 
-        # Return the Todo as JSON.
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Headers': '*',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-            },
-            'body': json.dumps(todo, cls=DecimalEncoder)
+            response = {
+                'statusCode': 200,
+                'body': json.dumps({'message': 'Record inserted successfully'}),
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+
+            return response
+
+        elif action == 'monthly_summary':
+            date = body.get('date', '')
+
+            # Parse the date string to get the year and month
+            year, month, _ = date.split('-')
+
+            # Get the first and last day of the month
+            first_day = datetime(int(year), int(month), 1).isoformat()
+            last_day = (datetime(int(year), int(month), 1) + timedelta(days=31)).isoformat()
+
+            # Query the DynamoDB table for records within the specified date range
+            response = app_table.scan(
+                FilterExpression='#t between :start and :end',
+                ExpressionAttributeNames={
+                    '#t': 'timestamp'
+                },
+                ExpressionAttributeValues={
+                    ':start': first_day,
+                    ':end': last_day
+                }
+            )
+
+            # Count the number of records for each sellName
+            summary = {}
+            for item in response['Items']:
+                sellName = str(item['aumnp'])  # キーを文字列に変換する
+                if sellName not in summary:
+                    summary[sellName] = 0
+                summary[sellName] += 1
+
+            response = {
+                'statusCode': 200,
+                'body': json.dumps(summary),
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+
+            return response
+
+    # If the request is not a POST request or the action is not recognized, return an error response
+    response = {
+        'statusCode': 400,
+        'body': json.dumps({'error': 'Invalid request'}),
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
         }
+    }
 
-    # /GETアクセスの場合はこちら
-    elif event['httpMethod'] == 'GET':
-        # Get all Todos.
-        app_table_datas = app_table.scan()
-
-        # Return all Todos as JSON.
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Headers': '*',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-            },
-            'body': json.dumps(app_table_datas, cls=DecimalEncoder)
-        }
+    return response
